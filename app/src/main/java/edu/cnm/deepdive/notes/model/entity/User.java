@@ -1,7 +1,17 @@
 package edu.cnm.deepdive.notes.model.entity;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Index;
+import androidx.room.PrimaryKey;
 import java.time.Instant;
-
+@Entity(
+    tableName = "user",
+    indices = {
+        @Index(value = {"oauth_key"}, unique = true),
+        @Index(value = {"display_name"}, unique = true)
+    }
+)
 public class User {
   /*
   C - Create account with oauth/server side
@@ -10,9 +20,16 @@ public class User {
   D - Deletion: Not Applicable
    */
 
+  @PrimaryKey(autoGenerate = true)
+  @ColumnInfo(name = "user_id")
   private long id;
+
+  @ColumnInfo(name = "oauth_key")
   private String oauthKey;
+
+  @ColumnInfo(name = "display_name", collate = ColumnInfo.NOCASE)
   private String displayName;
+
   private Instant created;
 
   public long getId() {
