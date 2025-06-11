@@ -1,5 +1,6 @@
 package edu.cnm.deepdive.notes.model.entity;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -29,16 +30,19 @@ public class Note {
   @ColumnInfo(name = "note_id")
   private long id;
 
+  @NonNull
   @ColumnInfo(collate = ColumnInfo.NOCASE, index = true)
-  private String title;
+  private String title = "";
 
   private String description;
 
+  @NonNull
   @ColumnInfo(index = true)
-  private Instant created;
+  private Instant created = Instant.now();
 
+  @NonNull
   @ColumnInfo(index = true)
-  private Instant modified;
+  private Instant modified = Instant.now();
 
   @ColumnInfo(name = "user_id", index = true)
   private long userId;
@@ -51,11 +55,13 @@ public class Note {
     this.id = id;
   }
 
+  @NonNull
   public String getTitle() {
     return title;
   }
 
-  public void setTitle(String title) {
+
+  public void setTitle(@NonNull String title) {
     this.title = title;
   }
 
@@ -67,19 +73,21 @@ public class Note {
     this.description = description;
   }
 
+  @NonNull
   public Instant getCreated() {
     return created;
   }
 
-  public void setCreated(Instant created) {
+  public void setCreated(@NonNull Instant created) {
     this.created = created;
   }
 
+  @NonNull
   public Instant getModified() {
     return modified;
   }
 
-  public void setModified(Instant modified) {
+  public void setModified(@NonNull Instant modified) {
     this.modified = modified;
   }
 
