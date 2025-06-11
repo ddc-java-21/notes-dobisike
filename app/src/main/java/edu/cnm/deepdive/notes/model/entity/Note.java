@@ -3,6 +3,12 @@ package edu.cnm.deepdive.notes.model.entity;
 import java.time.Instant;
 
 public class Note {
+  /*
+  C - Create a note connected to the user
+  R - Retrieve all notes for user in their activity for viewing
+  U - Update bullet points, photos and descriptions
+  D - Ability to delete note from application entirely
+   */
 
   private long id;
   private String title;

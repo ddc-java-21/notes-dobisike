@@ -3,6 +3,12 @@ package edu.cnm.deepdive.notes.model.entity;
 import java.time.Instant;
 
 public class User {
+  /*
+  C - Create account with oauth/server side
+  R - Retrieve local information for date/time formatting for user
+  U - Update display name
+  D - Deletion: Not Applicable
+   */
 
   private long id;
   private String oauthKey;
