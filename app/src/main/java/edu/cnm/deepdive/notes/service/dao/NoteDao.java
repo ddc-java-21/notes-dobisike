@@ -7,7 +7,6 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 import edu.cnm.deepdive.notes.model.entity.Note;
-import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Single;
 import java.time.Instant;
 import java.util.List;
@@ -19,19 +18,21 @@ public interface NoteDao {
   Single<Long> insert(Note note);
 
   default Single<Note> insertAndGet(Note note) {
-    return insert(note)
-        .map((id) -> {
-          note.setId(id);
-          return note;
-        });
+    return Single.just(note)
+        .doOnSuccess((n) -> {
+          Instant now = Instant.now();
+          n.setCreated(now)
+              .setModified(now);
+        })
+        .flatMap(this::insert)
+        .map(note::setId);
   }
 
   @Update
   Single<Integer> update(Note note);
 
   default Single<Note> updateTimestampAndSave(Note note) {
-    return Single
-        .just(note)
+    return Single.just(note)
         .map((n) -> {
           n.setModified(Instant.now());
           return n;
