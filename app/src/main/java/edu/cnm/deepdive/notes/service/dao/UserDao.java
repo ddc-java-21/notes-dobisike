@@ -16,18 +16,20 @@ import java.util.List;
 public interface UserDao {
 
   @Insert
-  Single<Long> _insert(User user); // When should we us user.setId(...) to update the object in memory.
+  Single<Long> _insert(
+      User user); // When should we us user.setId(...) to update the object in memory.
 
   default Single<User> insert(User user) {
     return Single
         .just(user)
-            .doOnSuccess((u) -> {
-              Instant now = Instant.now();
-              u.setCreated(now)
-                  .setModified(now);
-            })
-                .flatMap(this::_insert)
-                .map(user::setId);
+        .doOnSuccess((u) -> {
+          Instant now = Instant.now();
+          u.setCreated(now);
+          u.setModified(now);
+        })
+        .flatMap(this::_insert)
+        .doOnSuccess(user::setId)
+        .map((id) -> user);
   }
 
   @Update

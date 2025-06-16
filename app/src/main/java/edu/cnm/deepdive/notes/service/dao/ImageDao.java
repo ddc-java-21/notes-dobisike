@@ -18,14 +18,14 @@ public interface ImageDao {
   @Insert
   Single<Long> _insert(Image image);
 
-  Single<Image> insert(Image image);
 
-  default Single<Image> insertAndGet(Image image) {
+  default Single<Image> insert(Image image) {
     return Single
         .just(image)
         .doOnSuccess((img) -> img.setCreated(Instant.now()))
         .flatMap(this::_insert)
-        .map(image::setId);
+        .doOnSuccess(image::setId)
+        .map((id) -> image);
   }
 
   @Insert
@@ -39,11 +39,11 @@ public interface ImageDao {
           imgs.forEach((img) -> img.setCreated(now));
         })
         .flatMap(this::_insert)
-        .map((ids) -> {
-          Iterator<Long> idIterator = ids.iterator();
+        .map((id) -> {
+          Iterator<Long> iterator = id.iterator();
           Iterator<Image> imgIterator = images.iterator();
-          while (idIterator.hasNext() && imgIterator.hasNext()) {
-            imgIterator.next().setId(idIterator.next());
+          while (iterator.hasNext() && imgIterator.hasNext()) {
+            imgIterator.next().setId(iterator.next());
           }
           return images;
         });

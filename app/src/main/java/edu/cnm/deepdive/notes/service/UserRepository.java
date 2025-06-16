@@ -25,8 +25,8 @@ public class UserRepository {
   public Single<User> save(User user) {
     return (
         (user.getId() == 0)
-        ? userDao.insertAndGet(user)
-        : userDao.updateTimestampAndSave(user)
+        ? userDao.insert(user)
+        : userDao.update(user)
             )
             .subscribeOn(scheduler);
   }
@@ -37,6 +37,7 @@ public class UserRepository {
   public Completable remove(User user) {
     return userDao
         .delete(user)
+        .ignoreElement()
         .subscribeOn(scheduler);
   }
 
