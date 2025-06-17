@@ -3,7 +3,6 @@ package edu.cnm.deepdive.notes.view.adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
@@ -12,6 +11,8 @@ import dagger.hilt.android.qualifiers.ActivityContext;
 import dagger.hilt.android.scopes.FragmentScoped;
 import edu.cnm.deepdive.notes.databinding.ItemNoteBinding;
 import edu.cnm.deepdive.notes.model.entity.Note;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
@@ -68,9 +69,13 @@ public class NoteAdapter extends Adapter<ViewHolder> {
     }
 
     void bind (int position, Note note) {
-      // TODO: 6/16/25 Set contents of binding fields to hold contents of note; attach event
-      //  listeners to binding.getRoot().
-
+      binding.title.setText(note.getTitle());
+      String description = note.getDescription();
+      binding.description.setText(description != null ? description : "");
+      binding.created.setText(
+          formatter.format(LocalDateTime.ofInstant(note.getCreated(), ZoneId.systemDefault())));
+      // TODO: 6/17/25 Display thumbnail.
+      // TODO: 6/17/25 Attach click listener.
     }
 
   }
