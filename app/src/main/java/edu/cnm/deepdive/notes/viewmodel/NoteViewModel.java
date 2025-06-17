@@ -55,6 +55,29 @@ public class NoteViewModel extends ViewModel implements DefaultLifecycleObserver
     return note;
   }
 
+  public void save(Note note) {
+    throwable.setValue(null);
+    repository
+        .save(note)
+        .ignoreElement()
+        .subscribe(
+            () -> {},
+            this::postThrowable,
+            pending
+        );
+  }
+
+  public void remove(Note note) {
+    throwable.setValue(null);
+    repository
+        .remove(note)
+        .subscribe(
+            () -> {},
+            this::postThrowable,
+            pending
+        );
+  }
+
   public LiveData<Throwable> getThrowable() {
     return throwable;
   }
