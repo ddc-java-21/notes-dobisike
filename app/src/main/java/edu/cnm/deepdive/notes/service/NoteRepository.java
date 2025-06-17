@@ -4,6 +4,7 @@ import static kotlinx.coroutines.flow.FlowKt.subscribeOn;
 
 import androidx.lifecycle.LiveData;
 import edu.cnm.deepdive.notes.model.entity.Note;
+import edu.cnm.deepdive.notes.model.pojo.NoteWithImages;
 import edu.cnm.deepdive.notes.service.dao.NoteDao;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Scheduler;
@@ -26,7 +27,7 @@ public class NoteRepository {
     scheduler = Schedulers.io();
   }
 
-  public LiveData<Note> get(long noteId) {
+  public LiveData<NoteWithImages> get(long noteId) {
     return noteDao.select(noteId);
   }
 
@@ -37,7 +38,8 @@ public class NoteRepository {
         .ignoreElement();
   }
 
-  public Single<Note> save(Note note) {
+  public Single<Note> save(NoteWithImages note) {
+    // TODO: 6/17/25 Modify to save insert/update images.
     return (
         (note.getId() == 0)
         ? noteDao.insert(note)
@@ -46,7 +48,7 @@ public class NoteRepository {
         .subscribeOn(scheduler);
   }
 
-  public LiveData<List<Note>> getAll() {
+  public LiveData<List<NoteWithImages>> getAll() {
     return noteDao.selectWhereUserIdOrderByCreatedDesc(1); // FIXME: 6/17/25 Replace after implementing Google Sign In
   }
 

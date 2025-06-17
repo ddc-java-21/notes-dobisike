@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel;
 import dagger.hilt.android.lifecycle.HiltViewModel;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import edu.cnm.deepdive.notes.model.entity.Note;
+import edu.cnm.deepdive.notes.model.pojo.NoteWithImages;
 import edu.cnm.deepdive.notes.service.NoteRepository;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import java.util.List;
@@ -26,7 +27,7 @@ public class NoteViewModel extends ViewModel implements DefaultLifecycleObserver
   private final MutableLiveData<Long> noteId;
   private final MutableLiveData<Throwable> throwable;
   private final CompositeDisposable pending;
-  private final LiveData<Note> note;
+  private final LiveData<NoteWithImages> note;
 
   @Inject
   NoteViewModel(@ApplicationContext Context context, NoteRepository repository) {
@@ -47,15 +48,15 @@ public class NoteViewModel extends ViewModel implements DefaultLifecycleObserver
   this.noteId.setValue(noteId);
   }
 
-  public LiveData<List<Note>> getNotes() {
+  public LiveData<List<NoteWithImages>> getNotes() {
     return repository.getAll();
   }
 
-  public LiveData<Note> getNote() {
+  public LiveData<NoteWithImages> getNote() {
     return note;
   }
 
-  public void save(Note note) {
+  public void save(NoteWithImages note) {
     throwable.setValue(null);
     repository
         .save(note)
