@@ -16,6 +16,7 @@
     android:supportsRtl="true"
     android:theme="@style/AppTheme"
     tools:ignore="AllowBackup,DataExtractionRules">
+
     <activity
       android:exported="true"
       android:name=".controller.MainActivity">
@@ -27,6 +28,18 @@
       </intent-filter>
 
     </activity>
+
+    <provider
+      android:authorities="${applicationID.service.imagefileprovider}"
+      android:name=".service.ImageFileProvider"
+      android:exported="false"
+      android:grantUriPermissions="true">
+
+      <meta-data
+        android:name="android.support.FILE_PROVIDER_PATHS"
+        android:resource="@xml/provider_paths"/>
+
+    </provider>
 
   </application>
 
