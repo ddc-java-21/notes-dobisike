@@ -36,26 +36,23 @@ public class DetailsFragment extends Fragment {
   // TODO: 6/18/25 Use our provider to get that authority.
   private static final String AUTHORITY = ImageFileProvider.class.getName().toLowerCase();
 
-  private final ActivityResultLauncher<String> requestCameraPermissionLauncher =
-      registerForActivityResult(new ActivityResultContracts.RequestPermission(), (granted) -> {
-        if(granted) {
-          // TODO: 6/17/25 Make camera capture control visible.
-        } else {
-          // TODO: 6/17/25 Make camera capture control gone.
-        }
-      });
 
   private FragmentDetailsBinding binding;
   private NoteViewModel viewModel;
   private long noteId;
   private NoteWithImages note;
+  private ActivityResultLauncher<String> requestCameraPermissionLauncher;
   private ActivityResultLauncher<Uri> takePictureLauncher;
+  private boolean cameraPermissionGranted;
 
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     noteId = DetailsFragmentArgs.fromBundle(getArguments()).getNoteId();
+    requestCameraPermissionLauncher =
+        registerForActivityResult(new ActivityResultContracts.RequestPermission(),
+            (granted) -> cameraPermissionGranted = granted);
   }
 
   @Nullable
@@ -63,6 +60,16 @@ public class DetailsFragment extends Fragment {
   public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
     binding = FragmentDetailsBinding.inflate(inflater, container, false);
+    binding.edit.setOnClickListener((v) -> viewModel.setEditing(true));
+    binding.save.setOnClickListener((v) -> {
+      // TODO: 6/18/25 Update note field and invoke save method in viewModel.
+      viewModel.setEditing(false);
+    });
+    binding.cancel.setOnClickListener((v) -> {
+      // TODO: 6/18/25 Discard changes, return note field to its original state.
+      viewModel.setEditing(false);
+    });
+    binding.addPhoto.setOnClickListener((v) -> capture());
     return binding.getRoot();
   }
 
@@ -74,24 +81,43 @@ public class DetailsFragment extends Fragment {
     viewModel = provider.get(NoteViewModel.class);
     if (noteId != 0) {
       viewModel.setNoteId(noteId);
-      viewModel
-          .getNote()
-          .observe(owner, (note) -> {
-            this.note = note;
-            // TODO: 6/17/25 Set contents of view widgets based on note.
-          });
+      viewModel.getNote().observe(owner, this::handleNote);
     } else {
       note = new NoteWithImages();
     }
     viewModel
         .getCaptureUri()
-        .observe(owner, (uri) -> {
-          Image image = new Image();
-          image.setUri(uri);
-          note.getImages().add(image);
-        });
+        .observe(owner, this::handleCaptureUri);
+    viewModel
+        .getEditing()
+        .observe(owner, this::handleEditing);
     takePictureLauncher = registerForActivityResult(new TakePicture(), viewModel::confirmCapture);
     checkCameraPermission();
+  }
+
+  private void handleEditing(Boolean editing) {
+    if(editing) {
+      binding.edit.setVisibility(View.GONE);
+      binding.addPhoto.setVisibility(cameraPermissionGranted ? View.VISIBLE : View.GONE);
+      binding.save.setVisibility(View.VISIBLE);
+      binding.cancel.setVisibility(View.VISIBLE);
+    } else {
+      binding.edit.setVisibility(View.VISIBLE);
+      binding.addPhoto.setVisibility(View.GONE);
+      binding.save.setVisibility(View.GONE);
+      binding.cancel.setVisibility(View.GONE);
+    }
+  }
+
+  private void handleCaptureUri(Uri uri) {
+    Image image = new Image();
+    image.setUri(uri);
+    note.getImages().add(image);
+  }
+
+  private void handleNote(NoteWithImages note) {
+    this.note = note;
+    // TODO: 6/17/25 Set contents of view widgets based on note.
   }
 
   @Override
@@ -108,7 +134,7 @@ public class DetailsFragment extends Fragment {
         requestCameraPermission();
       }
     } else {
-      // TODO: 6/17/25 Make camera capture control visible.
+      cameraPermissionGranted = true;
     }
   }
 
@@ -133,7 +159,7 @@ public class DetailsFragment extends Fragment {
         .show();
   }
 
-  private void capture(Uri url) {
+  private void capture() {
     Context context = requireContext();
     File captureDir = new File(context.getFilesDir(), getString(R.string.capture_directory));
     //noinspection ResultOfMethodCallIgnored

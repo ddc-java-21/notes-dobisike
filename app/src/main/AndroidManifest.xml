@@ -30,7 +30,7 @@
     </activity>
 
     <provider
-      android:authorities="${applicationID.service.imagefileprovider}"
+      android:authorities="${applicationId}.service.imagefileprovider"
       android:name=".service.ImageFileProvider"
       android:exported="false"
       android:grantUriPermissions="true">
