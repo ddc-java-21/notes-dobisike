@@ -84,8 +84,6 @@
 
   </LinearLayout>
 
-  <!--  TODO Define TextView wigets for display of create-->
-
   <ImageButton
     android:id="@+id/edit"
     android:layout_width="@dimen/edit_button_size"

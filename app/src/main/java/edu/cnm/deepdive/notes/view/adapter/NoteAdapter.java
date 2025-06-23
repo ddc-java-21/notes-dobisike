@@ -23,11 +23,12 @@ import javax.inject.Inject;
 @FragmentScoped
 public class NoteAdapter extends Adapter<ViewHolder> {
 
-  @NonNull
-  private OnNoteClickListener listener;
   private final List<NoteWithImages> notes;
   private final LayoutInflater inflater;
   private final DateTimeFormatter formatter;
+
+  @NonNull
+  private OnNoteClickListener listener;
 
   @Inject
   NoteAdapter(@ActivityContext Context context) {
@@ -36,7 +37,6 @@ public class NoteAdapter extends Adapter<ViewHolder> {
     formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT);
     listener = (note, position) -> {};
   }
-
 
   @NonNull
   @Override
@@ -59,12 +59,11 @@ public class NoteAdapter extends Adapter<ViewHolder> {
   public void setNotes(List<NoteWithImages> notes) {
     this.notes.clear();
     this.notes.addAll(notes);
-    notifyDataSetChanged(); // TODO: 6/16/25 Investigate retaining scroll position.
+    notifyDataSetChanged();
   }
 
-  public NoteAdapter setListener(@NonNull OnNoteClickListener listener) {
+  public void setListener(@NonNull OnNoteClickListener listener) {
     this.listener = listener;
-    return this;
   }
 
   private static class Holder extends ViewHolder {
@@ -81,7 +80,7 @@ public class NoteAdapter extends Adapter<ViewHolder> {
       this.listener = listener;
     }
 
-    void bind (int position, NoteWithImages note) {
+    void bind(int position, NoteWithImages note) {
       binding.title.setText(note.getTitle());
       String description = note.getDescription();
       binding.description.setText(description != null ? description : "");

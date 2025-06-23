@@ -24,6 +24,11 @@
   </style>
 
   <style name="ListItemTitle" parent="TextAppearance.Material3.TitleMedium">
-
+    <!-- TODO Override other attributes as appropriate.-->
   </style>
+
+  <style name="DetailsTitle" parent="TextAppearance.Material3.TitleLarge"/>
+  <style name="DetailsDescription" parent="TextAppearance.Material3.BodyLarge"/>
+  <style name="DetailsDate" parent="TextAppearance.Material3.BodyMedium"/>
+
 </resources>
