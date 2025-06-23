@@ -23,9 +23,9 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.snackbar.Snackbar;
 import edu.cnm.deepdive.notes.R;
 import edu.cnm.deepdive.notes.databinding.FragmentDetailsBinding;
-import edu.cnm.deepdive.notes.model.entity.Image;
 import edu.cnm.deepdive.notes.model.pojo.NoteWithImages;
 import edu.cnm.deepdive.notes.service.ImageFileProvider;
+import edu.cnm.deepdive.notes.view.adapter.ImageAdapter;
 import edu.cnm.deepdive.notes.viewmodel.NoteViewModel;
 import edu.cnm.deepdive.notes.viewmodel.NoteViewModel.VisibilityFlags;
 import java.io.File;
@@ -34,9 +34,7 @@ import java.util.UUID;
 public class DetailsFragment extends Fragment {
 
   private static final String TAG = DetailsFragment.class.getSimpleName();
-  // TODO: 6/18/25 Use our provider to get that authority.
   private static final String AUTHORITY = ImageFileProvider.class.getName().toLowerCase();
-
 
   private FragmentDetailsBinding binding;
   private NoteViewModel viewModel;
@@ -44,7 +42,6 @@ public class DetailsFragment extends Fragment {
   private NoteWithImages note;
   private ActivityResultLauncher<String> requestCameraPermissionLauncher;
   private ActivityResultLauncher<Uri> takePictureLauncher;
-
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,8 +56,17 @@ public class DetailsFragment extends Fragment {
     binding = FragmentDetailsBinding.inflate(inflater, container, false);
     binding.edit.setOnClickListener((v) -> viewModel.setEditing(true));
     binding.save.setOnClickListener((v) -> {
-      // TODO: 6/18/25 Update note field and invoke save method in viewModel.
+      boolean addObserver = (note.getId() == 0);
+      note.setTitle(binding.titleEditable.getText().toString().strip());
+      String description = binding.descriptionEditable.getText().toString().strip();
+      note.setDescription(description.isEmpty() ? null : description);
+      viewModel.save(note);
       viewModel.setEditing(false);
+      if (addObserver) {
+        viewModel
+            .getNote()
+            .observe(getViewLifecycleOwner(), this::handleNote);
+      }
     });
     binding.cancel.setOnClickListener((v) -> {
       // TODO: 6/18/25 Discard changes, return note field to its original state.
@@ -78,25 +84,33 @@ public class DetailsFragment extends Fragment {
     viewModel = provider.get(NoteViewModel.class);
     if (noteId != 0) {
       viewModel.setNoteId(noteId);
-      viewModel.getNote().observe(owner, this::handleNote);
+      viewModel
+          .getNote()
+          .observe(owner, this::handleNote);
     } else {
       note = new NoteWithImages();
+      handleNote(note);
+      // TODO: 6/23/25 Invoke method in viewModel to clear images.
+      viewModel.setEditing(true);
     }
     viewModel
-        .getCaptureUri()
-        .observe(owner, this::handleCaptureUri);
+        .getImages()
+        .observe(owner, (images) -> {
+          ImageAdapter adapter = new ImageAdapter(requireContext(), images);
+          binding.images.setAdapter(adapter);
+        });
     viewModel
         .getVisibilityFlags()
         .observe(owner, this::handleVisibilityFlags);
     requestCameraPermissionLauncher = registerForActivityResult(
         new ActivityResultContracts.RequestPermission(),
-            viewModel::setCameraPermission);
+        viewModel::setCameraPermission);
     takePictureLauncher = registerForActivityResult(new TakePicture(), viewModel::confirmCapture);
     checkCameraPermission();
   }
 
   private void handleVisibilityFlags(VisibilityFlags flags) {
-    if(flags.editing()) {
+    if (flags.editing()) {
       binding.staticContent.setVisibility(View.GONE);
       binding.editableContent.setVisibility(View.VISIBLE);
       binding.edit.setVisibility(View.GONE);
@@ -113,16 +127,11 @@ public class DetailsFragment extends Fragment {
     }
   }
 
-  private void handleCaptureUri(Uri uri) {
-    Image image = new Image();
-    image.setUri(uri);
-    note.getImages().add(image);
-  }
-
   private void handleNote(NoteWithImages note) {
     this.note = note;
+    noteId = note.getId();
     binding.titleStatic.setText(note.getTitle());
-    binding.titleEditable.setText(note.getTitle()); // FIXME: 6/18/25 Dry violation
+    binding.titleEditable.setText(note.getTitle());
     binding.descriptionStatic.setText(note.getDescription());
     binding.descriptionEditable.setText(note.getDescription());
   }
@@ -161,7 +170,7 @@ public class DetailsFragment extends Fragment {
 
   private void explainCameraPermission() {
     Snackbar.make(
-        binding.getRoot(), R.string.camera_permission_explanation, Snackbar.LENGTH_INDEFINITE)
+            binding.getRoot(), R.string.camera_permission_explanation, Snackbar.LENGTH_INDEFINITE)
         .setAction(android.R.string.ok, (v) -> requestCameraPermission())
         .show();
   }
@@ -175,7 +184,7 @@ public class DetailsFragment extends Fragment {
     do {
       captureFile = new File(captureDir, UUID.randomUUID().toString());
     } while (captureFile.exists());
-    Uri uri = FileProvider.getUriForFile(context,AUTHORITY, captureFile);
+    Uri uri = FileProvider.getUriForFile(context, AUTHORITY, captureFile);
     viewModel.setPendingCaptureUri(uri);
     takePictureLauncher.launch(uri);
   }
