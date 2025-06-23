@@ -22,10 +22,10 @@ import java.time.Instant;
 public abstract class NotesDatabase extends RoomDatabase {
 
   static final int VERSION = 1;
-  private static final String Name = "notes-db";
+  private static final String NAME = "notes-db";
 
   public static String getName() {
-    return Name;
+    return NAME;
   }
 
   public abstract UserDao getUserDao();
@@ -55,5 +55,7 @@ public abstract class NotesDatabase extends RoomDatabase {
     public static Uri fromString(String value) {
       return (value != null) ? Uri.parse(value) : null;
     }
+
   }
+
 }

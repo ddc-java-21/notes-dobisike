@@ -16,6 +16,7 @@ public class UserRepository {
 
   private final UserDao userDao;
   private final Scheduler scheduler;
+
   @Inject
   UserRepository(UserDao userDao) {
     this.userDao = userDao;
@@ -25,11 +26,12 @@ public class UserRepository {
   public Single<User> save(User user) {
     return (
         (user.getId() == 0)
-        ? userDao.insert(user)
-        : userDao.update(user)
-            )
-            .subscribeOn(scheduler);
+            ? userDao.insert(user)
+            : userDao.update(user)
+    )
+        .subscribeOn(scheduler);
   }
+
   public LiveData<User> get(long userId) {
     return userDao.select(userId);
   }
@@ -41,7 +43,8 @@ public class UserRepository {
         .subscribeOn(scheduler);
   }
 
-  public LiveData<List<User>> getAll(){
+  public LiveData<List<User>> getAll() {
     return userDao.select();
   }
+
 }

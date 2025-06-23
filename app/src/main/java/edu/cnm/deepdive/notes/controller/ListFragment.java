@@ -31,7 +31,6 @@ public class ListFragment extends Fragment implements MenuProvider {
   private FragmentListBinding binding;
   private NoteViewModel viewModel;
 
-
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -40,6 +39,8 @@ public class ListFragment extends Fragment implements MenuProvider {
     binding.notes.setAdapter(adapter);
     adapter.setListener((note, position) -> Navigation.findNavController(binding.getRoot())
         .navigate(ListFragmentDirections.showDetails(note.getId())));
+    binding.addNote.setOnClickListener((v) -> Navigation.findNavController(binding.getRoot())
+        .navigate(ListFragmentDirections.showDetails(0)));
     return binding.getRoot();
   }
 
@@ -52,7 +53,7 @@ public class ListFragment extends Fragment implements MenuProvider {
     viewModel = provider.get(NoteViewModel.class);
     viewModel
         .getNotes()
-            .observe(owner, adapter::setNotes);
+        .observe(owner, adapter::setNotes);
     activity.addMenuProvider(this, owner, State.RESUMED);
   }
 
@@ -70,7 +71,8 @@ public class ListFragment extends Fragment implements MenuProvider {
   @Override
   public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
     // TODO: 6/16/25 Check the ID of menuItem, to see if it is of interest to us; if so, perform
-    //  appropriate operations and return; otherwise return false
+    //  appropriate operations and return true; otherwise, return false.
     return false;
   }
+
 }

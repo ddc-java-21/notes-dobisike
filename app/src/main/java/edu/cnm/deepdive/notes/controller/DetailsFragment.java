@@ -71,7 +71,6 @@ public class DetailsFragment extends Fragment {
       }
     });
     binding.cancel.setOnClickListener((v) -> {
-      // TODO: 6/18/25 Discard changes, return note field to its original state.
       viewModel.setEditing(false);
     });
     binding.addPhoto.setOnClickListener((v) -> capture());
