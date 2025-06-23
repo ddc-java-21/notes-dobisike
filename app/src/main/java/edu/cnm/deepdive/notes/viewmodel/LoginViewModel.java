@@ -68,7 +68,7 @@ public class LoginViewModel extends ViewModel implements DefaultLifecycleObserve
     service.startSignIn(launcher);
   }
 
-  public void completeSign(@NonNull ActivityResult result) {
+  public void completeSignIn(@NonNull ActivityResult result) {
     refreshThrowable.setValue(null);
     signInThrowable.setValue(null);
     service

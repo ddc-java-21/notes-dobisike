@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -50,12 +52,14 @@ public class LoginFragment extends Fragment {
         });
     viewModel
         .getSignInThrowable()
-        .observe(owner, (throwable -> {
+        .observe(owner, (throwable) -> {
           if (throwable != null) {
             Snackbar.make(binding.getRoot(), R.string.sign_in_failure_message, Snackbar.LENGTH_LONG)
                 .show();
           }
-        }));
+        });
+    launcher = registerForActivityResult(new StartActivityForResult(), viewModel::completeSignIn);
+
   }
 
   @Override
