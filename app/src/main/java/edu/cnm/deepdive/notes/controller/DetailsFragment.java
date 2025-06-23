@@ -31,6 +31,7 @@ import edu.cnm.deepdive.notes.viewmodel.NoteViewModel.VisibilityFlags;
 import java.io.File;
 import java.util.UUID;
 
+
 public class DetailsFragment extends Fragment {
 
   /** @noinspection unused*/
