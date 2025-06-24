@@ -28,6 +28,7 @@
     android:name="edu.cnm.deepdive.notes.controller.LoginFragment"
     android:label="@string/login_fragment_label"
     tools:layout="@layout/fragment_login">
+<!--    TODO center fragment label-->
 
     <action
       android:id="@+id/show_list"
@@ -64,6 +65,7 @@
     android:name="edu.cnm.deepdive.notes.controller.DetailsFragment"
     android:label="@string/details_fragment_label"
     tools:layout="@layout/fragment_details">
+<!--    TODO center details fragment label-->
 
     <argument
       android:name="note_id"

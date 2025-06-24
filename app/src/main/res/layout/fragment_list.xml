@@ -12,6 +12,7 @@
     android:orientation="vertical"
     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
     tools:listitem="@layout/item_note"/>
+<!--  TODO Center the all notes header of the app   (app: title centered)   -->
 
   <com.google.android.material.floatingactionbutton.FloatingActionButton
     android:id="@+id/add_note"

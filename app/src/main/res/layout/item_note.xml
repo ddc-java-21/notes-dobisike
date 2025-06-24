@@ -11,6 +11,8 @@
   android:background="?attr/selectableItemBackground"
   app:cardCornerRadius="4dp"
   app:cardElevation="4dp">
+<!--  TODO Add top app bar and make it disappear when you scroll down in your notes (layout scroll Flags)-->
+
 
   <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
@@ -29,6 +31,7 @@
       app:layout_constraintEnd_toStartOf="@id/created"
       app:layout_constraintHorizontal_weight="@integer/title_weight"
       tools:text="Some Notes Title"/>
+<!--    TODO center item note title -->
 
     <TextView
       android:id="@+id/created"
